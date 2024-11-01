@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Country Comparison</title>
+  <style>
+    /* CSS Styles */
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      background-color: #282c34;
+      color: white;
+      margin: 0;
+    }
+
+    .header {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(10px + 2vmin);
+    }
+
+    .input-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    #input1, #input2 {
+      width: 300px;
+      height: 200px;
+      margin-right: 75px;
+    }
+
+    .compare-button {
+      margin-right: 70px;
+    }
+
+    .output-container {
+      text-align: center;
+      margin-right: 700px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <p>http://localhost:3000/</p>
+  <p>yo</p>
+  <div class="input-container">
+    <textarea id="input1" placeholder="Input 1">CA, JP, MX, US, DE, IS, LI, NO</textarea>
+    <textarea id="input2" placeholder="Input 2"></textarea>
+  </div>
+
+  <div class="compare-button">
+    <button onclick="handleCompare()">Compare</button>
+  </div>
+  
+  <div class="output-container">
+    <p id="output"></p>
+  </div>
+</div>
+
+<script>
+  // JavaScript code
+  const countryMapping = {
+    "CANADA": "CA",
+    'EWR': ["IS", "LI", "NO"],
+    "GERMANY": "DE",
+    "ICELAND": "IS",
+    "KANADA": "CA",
+    "JAPAN": "JP",
+    "LIECHTENSTEIN": "LI",
+    "MEXICO": "MX",
+    "NORWAY": "NO",
+    "UNITED STATES": "US"
+  };
+
+  function handleCompare() {
+    const input1 = document.getElementById("input1").value;
+    const input2 = document.getElementById("input2").value;
+    
+    const list1 = input1.split(",").map(code => code.trim().toUpperCase());
+    const list2 = input2.split(/[\s,.]+/).map(code => {
+      const trimmedCode = code.trim().toUpperCase().replace(/[()]/g, "");
+      return countryMapping[trimmedCode] || trimmedCode;
+    });
+
+    const flattenedList2 = list2.flat();
+
+    const missingCountries = list1.filter(code => !flattenedList2.includes(code));
+    document.getElementById("output").textContent = "Missing countries: " + missingCountries.join(', ');
+  }
+
+  // Event listener for Enter key
+  document.getElementById("input2").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault(); // prevent the default Enter action
+      handleCompare();
+    }
+  });
+</script>
+
+</body>
+</html>
