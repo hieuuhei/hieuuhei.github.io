@@ -193,8 +193,9 @@
             commonCountries.push(group);
           } else {
             commonCountries.push(`${group} (${commonInGroup.join(', ')})`);
-            missingCountries.push(`${group} (${missingInGroup.join(', ')})`);
           }
+        } else {
+          missingCountries.push(`${group} (${missingInGroup.join(', ')})`);
         }
       }
     }
