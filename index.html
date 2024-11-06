@@ -171,7 +171,7 @@
       return countryMapping[trimmedCode] || trimmedCode;
     }).flat();
     
-    const list2 = input2.split(/[\s,.]+/).map(code => {
+    const list2 = input2.split(/[\s,;:*\/]+/).map(code => {
       const trimmedCode = code.trim().toUpperCase().replace(/[()]/g, "");
       return countryMapping[trimmedCode] || trimmedCode;
     }).flat();
@@ -200,7 +200,9 @@
 
     // Check for individual countries
     list1.forEach(code => {
-      if (!list2.includes(code) && !Object.keys(countryMapping).includes(code)) {
+      if (list2.includes(code)) {
+        commonCountries.push(code);
+      } else if (!Object.keys(countryMapping).includes(code)) {
         missingCountries.push(code);
       }
     });
