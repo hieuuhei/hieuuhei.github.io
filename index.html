@@ -194,8 +194,14 @@
           } else {
             commonCountries.push(`${group} (${commonInGroup.join(', ')})`);
           }
-        } else {
-          missingCountries.push(`${group} (${missingInGroup.join(', ')})`);
+        }
+
+        if (missingInGroup.length > 0) {
+          if (missingInGroup.length === groupCountries.length) {
+            missingCountries.push(group);
+          } else {
+            missingCountries.push(`${group} (${missingInGroup.join(', ')})`);
+          }
         }
       }
     }
