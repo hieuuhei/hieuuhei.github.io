@@ -23,6 +23,10 @@
       font-size: calc(10px + 2vmin);
     }
 
+    .legend {
+      font-size :10px;
+    }
+
     .input-container {
       display: flex;
       justify-content: center;
@@ -42,16 +46,26 @@
 
     .output-container {
       text-align: center;
-      margin-right: 700px;
+      margin-right: 200px;
     }
   </style>
 </head>
 <body>
 
 <div class="header">
-  <p>yo</p>
+  <div class ="legend">
+    <p>CAF: AG, BB, BS, BZ, DM, DO, GD, GY, HT, JM, KN, LC, SR, TT, VC<br>
+      CAM: CR, GT, HN, NI, PA, SV<br>
+      ESA: KM, MG, MU, SC, ZM, ZW<br>
+      EWR: IS, LI, NO<br>
+      SADC: BW, LS, MZ, NA, ZA, SZ<br>
+      ÜLG: PF, PM, NC<br>
+      WPS: FJ, PG, SB, WS</p>
+  </div>
+
   <div class="input-container">
-    <textarea id="input1" placeholder="Input 1">CA, JP, MX, US, DE, IS, LI, NO</textarea>
+    <textarea id="input1" placeholder="Input 1"
+    >AD, AL, BA, CA, CAF, CAM, CH, CL, CM, CO, DZ, EC,EG, ESA, EWR, FO, GE, GH, IL, JO, KR, LB, MA, MD, ME, MK, MX, NZ, PE,PS, SADC, SG, TN, UA, ÜLG, VN, WPS, XC, XK, XL, XS, JP,GB</textarea>
     <textarea id="input2" placeholder="Input 2"></textarea>
   </div>
 
@@ -60,49 +74,163 @@
   </div>
   
   <div class="output-container">
+    <p>missing countries:</p>
     <p id="output"></p>
+    <p>common countries:</p>
+    <p id="output2"></p>
+    <p>left over:</p>
+    <p id="output3"></p>
   </div>
 </div>
 
 <script>
   // JavaScript code
   const countryMapping = {
-    "CANADA": "CA",
-    'EWR': ["IS", "LI", "NO"],
-    "GERMANY": "DE",
-    "ICELAND": "IS",
+    "CAF": ["AG", "BB", "BS", "BZ", "DM", "DO", "GD", "GY", "HT", "JM", "KN", "LC", "SR", "TT", "VC"],
+    "CAM": ["CR", "GT", "HN", "NI", "PA", "SV"],
+    "ESA": [ "KM", "MG", "MU", "SC", "ZM", "ZW"],
+    "EWR": ["IS", "LI", "NO"],
+    "SADC": ["BW", "LS", "MZ", "NA", "ZA", "SZ"],
+    "ÜLG": ["PF", "PM", "NC"],
+    "WPS": ["FJ", "PG", "SB", "WS"],
+
+    "ANDORRA": "AD",
+    "ALBANIEN": "AL",
+    "ALBANIA": "AL",
+    
+    "BOSNIEN": "BA",
+    "BOSNIEN-HERZEGOWINA": "BA",
+    "BOSNIA": "BA",
+    "BOSNIA-HERZEGOVINA": "BA",
+    "HERZEGOVINA": "BA",
+
     "KANADA": "CA",
-    "JAPAN": "JP",
-    "LIECHTENSTEIN": "LI",
+    "CANADA": "CA",
+    "SCHWEIZ": "CH",
+    "SWITZERLAND": "CH",
+    "CHILE": "CL",
+    "KAMERUN": "CM",
+    "CAMEROON": "CM",
+    "KOLUMBIEN": "CO",
+    "COLUMBIA": "CO",
+    "ALGERIEN": "DZ",
+    "ALGERIA": "DZ",
+    "ECUADOR": "EC",
+    "ÄGYPTEN": "EG",
+    "EGYPT": "EG",
+    "FÄRÖER": "FO",
+    "FAROE": "FO",
+    "GEORGIEN": "GE",
+    "GEORGIA": "GE",
+    "GHANA": "GH",
+    "SINGAPUR": "SG",
+    "SINGAPORE": "SG",
+    "ISRAEL": "IL",
+    "JORDANIEN": "JO",
+    "JORDAN": "JO",
+    "SÜDKOREA": "KR",
+    "SOUTH-KOREA": "KR",
+    "KOREA": "KR",
+    "LIBANON": "LB",
+    "LEBANON": "LB",
+    "MAROKKO": "MA",
+    "MOROCCO": "MA",
+    "MOLDAWIEN": "MD",
+    "MOLDOVA": "MD",
+    "MONTENEGRO": "ME",
+    "MAZEDONIEN": "MK",
+    "MACEDONIA": "MK",
     "MEXICO": "MX",
-    "NORWAY": "NO",
-    "UNITED STATES": "US"
+    "NEUSEELAND": "NZ",
+    "NEW-ZEALAND": "NZ",
+    "ZEALAND": "NZ",
+    "PERU": "PE",
+    "PALÄSTNA": "PS",
+    "PALESTINE": "PS",
+    "TUNESIEN": "TN",
+    "TUNISIA": "TN",
+    "UKRAINE": "UA",
+    "VIETNAM": "VN",
+    "CEUTA": "XC",
+    "KOSOVO": "XK",
+    "KOSOVA": "XK",
+    "MELILLA": "XL",
+    "SERBIEN": "XS",
+    "SERBIA": "XS",
+    "JAPAN": "JP",
+    "GROSSBRITANNIEN": "GB",
+    "UNITED-KINGDOM": "GB"
   };
 
   function handleCompare() {
     const input1 = document.getElementById("input1").value;
     const input2 = document.getElementById("input2").value;
     
-    const list1 = input1.split(",").map(code => code.trim().toUpperCase());
+    const list1 = input1.split(/[\s,;:*]+/).map(code => {
+      const trimmedCode = code.trim().toUpperCase().replace(/[()]/g, "");
+      return countryMapping[trimmedCode] || trimmedCode;
+    }).flat();
+    
     const list2 = input2.split(/[\s,.]+/).map(code => {
       const trimmedCode = code.trim().toUpperCase().replace(/[()]/g, "");
       return countryMapping[trimmedCode] || trimmedCode;
+    }).flat();
+
+    const missingCountries = [];
+    const commonCountries = [];
+    const leftOverCountries = [];
+
+    // Check for common and missing countries
+    for (const group in countryMapping) {
+      if (Array.isArray(countryMapping[group])) {
+        const groupCountries = countryMapping[group];
+        const commonInGroup = groupCountries.filter(code => list2.includes(code));
+        const missingInGroup = groupCountries.filter(code => !list2.includes(code));
+
+        if (commonInGroup.length > 0) {
+          if (commonInGroup.length === groupCountries.length) {
+            commonCountries.push(group);
+          } else {
+            commonCountries.push(`${group} (${commonInGroup.join(', ')})`);
+            missingCountries.push(`${group} (${missingInGroup.join(', ')})`);
+          }
+        }
+      }
+    }
+
+    // Check for individual countries
+    list1.forEach(code => {
+      if (!list2.includes(code) && !Object.keys(countryMapping).includes(code)) {
+        missingCountries.push(code);
+      }
     });
 
-    const flattenedList2 = list2.flat();
+    list2.forEach(code => {
+      if (!list1.includes(code) && !Object.keys(countryMapping).includes(code)) {
+        leftOverCountries.push(code);
+      }
+    });
 
-    const missingCountries = list1.filter(code => !flattenedList2.includes(code));
-    document.getElementById("output").textContent = "Missing countries: " + missingCountries.join(', ');
+    document.getElementById("output").textContent = missingCountries.join(', ');
+    document.getElementById("output2").textContent = commonCountries.join(', ');
+    document.getElementById("output3").textContent = leftOverCountries.join(', ');
   }
 
   // Event listener for Enter key
-  document.getElementById("input2").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-      e.preventDefault(); // prevent the default Enter action
-      handleCompare();
-    }
-  });
-  //make change in country-compare-lite-app first then copy to hieuuhei.github.io
+
+    document.getElementById("input1").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+        e.preventDefault(); // prevent the default Enter action
+        handleCompare();
+        }
+    });
+    document.getElementById("input2").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+        e.preventDefault(); // prevent the default Enter action
+        handleCompare();
+        }
+    });
+  //make change in country-compare-lite-app first then copy to hieuuhei.github.io. then push to github
 </script>
 
 </body>
