@@ -183,35 +183,6 @@
     const commonSet = new Set();
     const missingSet = new Set();
 
-    // Check for common and missing countries
-    for (const group in countryMapping) {
-      if (Array.isArray(countryMapping[group])) {
-        const groupCountries = countryMapping[group];
-        const commonInGroup = groupCountries.filter(code => list2.includes(code));
-        const missingInGroup = groupCountries.filter(code => !list2.includes(code));
-
-        if (commonInGroup.length > 0) {
-          if (commonInGroup.length === groupCountries.length) {
-            commonCountries.push(group);
-            commonInGroup.forEach(code => commonSet.add(code));
-          } else {
-            commonCountries.push(`${group} (${commonInGroup.join(', ')})`);
-            commonInGroup.forEach(code => commonSet.add(code));
-          }
-        }
-
-        if (missingInGroup.length > 0) {
-          if (missingInGroup.length === groupCountries.length) {
-            missingCountries.push(group);
-            missingInGroup.forEach(code => missingSet.add(code));
-          } else {
-            missingCountries.push(`${group} (${missingInGroup.join(', ')})`);
-            missingInGroup.forEach(code => missingSet.add(code));
-          }
-        }
-      }
-    }
-
     // Check for individual countries
     list1.forEach(code => {
       if (list2.includes(code) && !commonSet.has(code)) {
@@ -235,19 +206,18 @@
   }
 
   // Event listener for Enter key
-
-    document.getElementById("input1").addEventListener("keydown", function(e) {
-        if (e.key === "Enter") {
-        e.preventDefault(); // prevent the default Enter action
-        handleCompare();
-        }
-    });
-    document.getElementById("input2").addEventListener("keydown", function(e) {
-        if (e.key === "Enter") {
-        e.preventDefault(); // prevent the default Enter action
-        handleCompare();
-        }
-    });
+  document.getElementById("input1").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault(); // prevent the default Enter action
+      handleCompare();
+    }
+  });
+  document.getElementById("input2").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault(); // prevent the default Enter action
+      handleCompare();
+    }
+  });
   //make change in country-compare-lite-app first then copy to hieuuhei.github.io. then push to github
 </script>
 
