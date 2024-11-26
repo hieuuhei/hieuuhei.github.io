@@ -94,15 +94,26 @@
     "SADC": ["BW", "LS", "MZ", "NA", "ZA", "SZ"],
     "ÜLG": ["PF", "PM", "NC"],
     "WPS": ["FJ", "PG", "SB", "WS"],
+    "südliches Afrika": "SADC",
+    "southern Africa": "SADC",
 
     "ANDORRA": "AD",
     "ALBANIEN": "AL",
     "ALBANIA": "AL",
+    "BARBADOS": "BB",
+    "BAHAMAS": "BS",
+    "BOTSWANA": "BW",
+    "BOTSUANA": "BW",
+    "BELIZE": "BZ",
+    "DOMINICA": "DM",
+
     
     "BOSNIEN": "BA",
     "BOSNIEN-HERZEGOWINA": "BA",
+    "Bosnien und Herzegowina": "BA",
     "BOSNIA": "BA",
     "BOSNIA-HERZEGOVINA": "BA",
+    "bosnia and herzegovina": "BA",
     "HERZEGOVINA": "BA",
 
     "KANADA": "CA",
@@ -112,6 +123,8 @@
     "CHILE": "CL",
     "KAMERUN": "CM",
     "CAMEROON": "CM",
+    "KOMOREN": "KM",
+    "COMOROS": "KM",
     "KOLUMBIEN": "CO",
     "COLUMBIA": "CO",
     "ALGERIEN": "DZ",
@@ -120,10 +133,39 @@
     "ÄGYPTEN": "EG",
     "EGYPT": "EG",
     "FÄRÖER": "FO",
+    "FÄROER": "FO",
+    "FARÖER": "FO",
     "FAROE": "FO",
+    "FIDJI": "FJ",
+    "FIDSCHI": "FJ",
+    "Fiji": "FJ",
     "GEORGIEN": "GE",
     "GEORGIA": "GE",
     "GHANA": "GH",
+    "GRENADA": "GD",
+    "GUATAEMALA": "GT",
+    "GUYANA": "GY",
+    "HAITI": "HT",
+    "HONDURAS": "HN",
+    "ISLAND": "IS",
+    "ICELAND": "IS",
+    "JAMAICA": "JM",
+    "JAMAIKA": "JM",
+    "LESOTHO": "LS",
+    "LIECHTENSTEIN": "LI",
+    "MARSHALLINSELN": "MH",
+    "MADAAGASKAR": "MG",
+    "MADAGASCAR": "MG",
+    "MAURITIUS": "MU",
+    "MOSAMBIK": "MZ",
+    "MOZAMBIQUE": "MZ",
+    "NAMIBIA": "NA",
+    "NICARAGUA": "NI",
+    "NORWEGEN": "NO",
+    "NORWAY": "NO",
+    "PANAMÁ": "PA",
+    "PANAMA": "PA",
+    "SAYCHELLEN": "SC",
     "SINGAPUR": "SG",
     "SINGAPORE": "SG",
     "ISRAEL": "IL",
@@ -142,12 +184,20 @@
     "MAZEDONIEN": "MK",
     "MACEDONIA": "MK",
     "MEXICO": "MX",
+    "NEUKALEDONIEN": "NC",
     "NEUSEELAND": "NZ",
     "NEW-ZEALAND": "NZ",
     "ZEALAND": "NZ",
     "PERU": "PE",
-    "PALÄSTNA": "PS",
+    "PAPUA-NEUGUINEA": "PG",
+    "PAPUA-NEW-GUINEA": "PG",
+    "PALÄSTINA": "PS",
     "PALESTINE": "PS",
+    "Besetzte palästinensische Gebiete": "PS",
+    "SALOMONEN": "SB",
+    "SOLOMON-ISLANDS": "SB",
+    "SWAZILAND": "SZ",
+    "ESWATINI": "SZ",
     "TUNESIEN": "TN",
     "TUNISIA": "TN",
     "UKRAINE": "UA",
@@ -158,52 +208,163 @@
     "MELILLA": "XL",
     "SERBIEN": "XS",
     "SERBIA": "XS",
+    "SURINAME": "SR",
     "JAPAN": "JP",
     "GROSSBRITANNIEN": "GB",
-    "UNITED-KINGDOM": "GB"
+    "UNITED-KINGDOM": "GB",
+    "SAMOA": "WS",
+    "SAMBIA": "ZM",
+    "ZIMBABWE": "ZW",
+    "SÜDAFRIKA": "ZA",
+    "SÜD-AFRIKA": "ZA",
+    "SOUTH-AFRICA": "ZA",
   };
 
   function handleCompare() {
-    const input1 = document.getElementById("input1").value;
-    const input2 = document.getElementById("input2").value;
-    
-    const list1 = input1.split(/[\s,;:*]+/).map(code => {
-      const trimmedCode = code.trim().toUpperCase().replace(/[()]/g, "");
-      return countryMapping[trimmedCode] || trimmedCode;
-    }).flat();
-    
-    const list2 = input2.split(/[\s,;:*\/]+/).map(code => {
-      const trimmedCode = code.trim().toUpperCase().replace(/[()]/g, "");
-      return countryMapping[trimmedCode] || trimmedCode;
-    }).flat();
+      let input1 = document.getElementById("input1").value;
+      let input2 = document.getElementById("input2").value;
 
-    const missingCountries = [];
-    const commonCountries = [];
-    const leftOverCountries = [];
-    const commonSet = new Set();
-    const missingSet = new Set();
+      // Replace specific phrases with their mapped values
+      input1 = 
+        input1.replace(/Antigua und Barbuda/gi, "AG")
+        .replace(/Antigua and Barbuda/gi, "AG")
+        .replace(/Besetzte palästinensische Gebiete/gi, "PS")
+        .replace(/bosnia and herzegovina/gi, "BA")
+        .replace(/bosnien und herzegowina/gi, "BA")
+        .replace(/Dominikanische Republik/gi, "DO")
+        .replace(/dominican republic/gi, "DO")
+        .replace(/COSTA RICA/gi, "CR")
+        .replace(/El Salvador/gi, "SV")
+        .replace(/südliches afrika/gi, "SADC")
+        .replace(/southern africa/gi, "SADC")
+        .replace(/St. Kitts und Nevis/gi, "KN")
+        .replace(/Saint Kitts und Nevis/gi, "KN")
+        .replace(/St. Kitts and Nevis/gi, "KN")
+        .replace(/Saint Kitts and Nevis/gi, "KN")
+        .replace(/St. Lucia/gi, "LC")
+        .replace(/Saint Lucia/gi, "LC")
+        .replace(/Französisch-Polynesien/gi, "PF")
+        .replace(/Französisch Polynesien/gi, "PF")
+        .replace(/French Polynesia/gi, "PF")
+        .replace(/Papua Neuguinea/gi, "PG")
+        .replace(/Papua New Guinea/gi, "PG")
+        .replace(/St. Pierre und Miquelon/gi, "PM")
+        .replace(/Saint Pierre und Miquelon/gi, "PM") 
+        .replace(/St. Pierre and Miquelon/gi, "PM")
+        .replace(/Saint Pierre and Miquelon/gi, "PM") 
+        .replace(/New Caledonia/gi, "NC")
+        .replace(/Solomon Islands/gi, "SB")
+        .replace(/Trinidad und Tobago/gi, "TT")
+        .replace(/Trinidad and Tobago/gi, "TT")
+        .replace(/St. Vincent und die Grenadinen/gi, "VC")
+        .replace(/Saint Vincent und die Grenadinen/gi, "VC")
+        .replace(/St. Vincent and the Grenadines/gi, "VC")
+        .replace(/Saint Vincent and the Grenadines/gi, "VC")
+        .replace(/South Africa/gi, "ZA");
+        
+      input2 = 
+        input2.replace(/Antigua und Barbuda/gi, "AG")
+        .replace(/Antigua and Barbuda/gi, "AG")
+        .replace(/Besetzte palästinensische Gebiete/gi, "PS")
+        .replace(/bosnia and herzegovina/gi, "BA")
+        .replace(/bosnien und herzegowina/gi, "BA")
+        .replace(/Dominikanische Republik/gi, "DO")
+        .replace(/dominican republic/gi, "DO")
+        .replace(/COSTA RICA/gi, "CR")
+        .replace(/El Salvador/gi, "SV")
+        .replace(/südliches afrika/gi, "SADC")
+        .replace(/southern africa/gi, "SADC")
+        .replace(/St. Kitts und Nevis/gi, "KN")
+        .replace(/Saint Kitts und Nevis/gi, "KN")
+        .replace(/St. Kitts and Nevis/gi, "KN")
+        .replace(/Saint Kitts and Nevis/gi, "KN")
+        .replace(/St. Lucia/gi, "LC")
+        .replace(/Saint Lucia/gi, "LC")
+        .replace(/Französisch-Polynesien/gi, "PF")
+        .replace(/Französisch Polynesien/gi, "PF")
+        .replace(/French Polynesia/gi, "PF")
+        .replace(/Papua Neuguinea/gi, "PG")
+        .replace(/Papua New Guinea/gi, "PG")
+        .replace(/St. Pierre und Miquelon/gi, "PM")
+        .replace(/Saint Pierre und Miquelon/gi, "PM") 
+        .replace(/St. Pierre and Miquelon/gi, "PM")
+        .replace(/Saint Pierre and Miquelon/gi, "PM") 
+        .replace(/New Caledonia/gi, "NC")
+        .replace(/Solomon Islands/gi, "SB")
+        .replace(/Trinidad und Tobago/gi, "TT")
+        .replace(/Trinidad and Tobago/gi, "TT")
+        .replace(/St. Vincent und die Grenadinen/gi, "VC")
+        .replace(/Saint Vincent und die Grenadinen/gi, "VC")
+        .replace(/St. Vincent and the Grenadines/gi, "VC")
+        .replace(/Saint Vincent and the Grenadines/gi, "VC")
+        .replace(/South Africa/gi, "ZA");
 
-    // Check for individual countries
-    list1.forEach(code => {
-      if (list2.includes(code) && !commonSet.has(code)) {
-        commonCountries.push(code);
-        commonSet.add(code);
-      } else if (!Object.keys(countryMapping).includes(code) && !missingSet.has(code)) {
-        missingCountries.push(code);
-        missingSet.add(code);
+        const list1 = input1.split(/[\s,;:*\/.\-"'()+]+/).map(code => {
+        const trimmedCode = code.trim().toUpperCase().replace(/[()]/g, "");
+        return countryMapping[trimmedCode] || trimmedCode;
+      }).flat();
+      
+      const list2 = input2.split(/[\s,;:*\/.\-"'()+]+/).map(code => {
+        const trimmedCode = code.trim().toUpperCase().replace(/[()]/g, "");
+        return countryMapping[trimmedCode] || trimmedCode;
+      }).flat();
+
+      const missingCountries = [];
+      const commonCountries = [];
+      const leftOverCountries = [];
+      const commonSet = new Set();
+      const missingSet = new Set();
+
+      // Check for common and missing countries
+      for (const group in countryMapping) {
+        if (Array.isArray(countryMapping[group])) {
+          const groupCountries = countryMapping[group];
+          const commonInGroup = groupCountries.filter(code => list2.includes(code));
+          const missingInGroup = groupCountries.filter(code => !list2.includes(code));
+
+          if (commonInGroup.length > 0) {
+            if (commonInGroup.length === groupCountries.length) {
+              commonCountries.push(group);
+              commonInGroup.forEach(code => commonSet.add(code));
+            } else {
+              commonCountries.push(`${group} (${commonInGroup.join(', ')})`);
+              commonInGroup.forEach(code => commonSet.add(code));
+            }
+          }
+
+          if (missingInGroup.length > 0) {
+            if (missingInGroup.length === groupCountries.length) {
+              missingCountries.push(group);
+              missingInGroup.forEach(code => missingSet.add(code));
+            } else {
+              missingCountries.push(`${group} (${missingInGroup.join(', ')})`);
+              missingInGroup.forEach(code => missingSet.add(code));
+            }
+          }
+        }
       }
-    });
 
-    list2.forEach(code => {
-      if (!list1.includes(code) && !Object.keys(countryMapping).includes(code)) {
-        leftOverCountries.push(code);
-      }
-    });
+      // Check for individual countries
+      list1.forEach(code => {
+        if (list2.includes(code) && !commonSet.has(code)) {
+          commonCountries.push(code);
+          commonSet.add(code);
+        } else if (!Object.keys(countryMapping).includes(code) && !missingSet.has(code)) {
+          missingCountries.push(code);
+          missingSet.add(code);
+        }
+      });
 
-    document.getElementById("output").textContent = missingCountries.join(', ');
-    document.getElementById("output2").textContent = commonCountries.join(', ');
-    document.getElementById("output3").textContent = leftOverCountries.join(', ');
-  }
+      list2.forEach(code => {
+        if (!list1.includes(code) && !Object.keys(countryMapping).includes(code)) {
+          leftOverCountries.push(code);
+        }
+      });
+
+      document.getElementById("output").textContent = missingCountries.join(', ');
+      document.getElementById("output2").textContent = commonCountries.join(', ');
+      document.getElementById("output3").textContent = leftOverCountries.join(', ');
+    }
 
   // Event listener for Enter key
   document.getElementById("input1").addEventListener("keydown", function(e) {
