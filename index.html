@@ -65,7 +65,7 @@
 
   <div class="input-container">
     <textarea id="input1" placeholder="Input 1"
-    >AD, AL, BA, CA, CAF, CAM, CH, CL, CM, CO, DZ, EC,EG, ESA, EWR, FO, GE, GH, IL, JO, KR, LB, MA, MD, ME, MK, MX, NZ, PE,PS, SADC, SG, TN, UA, ÜLG, VN, WPS, XC, XK, XL, XS, JP,GB</textarea>
+    >AD, AL, BA, CA, CAF, CAM, CH, CL, CM, CO, DZ, EC,EG, ESA, EWR, FO, GE, GH, IL, JO, KR, LB, MA, MD, ME, MK, MX, NZ, PE, PS, SADC, SG, TN, UA, ÜLG, VN, WPS, XC, XK, XL, XS, GB</textarea>
     <textarea id="input2" placeholder="Input 2"></textarea>
   </div>
 
@@ -194,6 +194,7 @@
     "PALÄSTINA": "PS",
     "PALESTINE": "PS",
     "Besetzte palästinensische Gebiete": "PS",
+    "RS": "XS",
     "SALOMONEN": "SB",
     "SOLOMON-ISLANDS": "SB",
     "SWAZILAND": "SZ",
@@ -234,8 +235,9 @@
   "Dominikanische Republik": "DO",
   "dominican republic": "DO",
   "COSTA RICA": "CR",
+  "CARIFORUM": "CAF",
   "El Salvador": "SV",
-  "südliches afrika": "SADC",
+  "südliches afrika": "SADC", 
   "southern africa": "SADC",
   "St. Kitts und Nevis": "KN",
   "Saint Kitts und Nevis": "KN",
@@ -269,8 +271,15 @@
       input2 = input2.replace(regex, value);
     }
 
-    const list1 = input1.split(/[\s,;:*\/.\-"'()+]+/).map(code => code.trim().toUpperCase());
-    const list2 = input2.split(/[\s,;:*\/.\-"'()+]+/).map(code => code.trim().toUpperCase());
+    for (const [key, value] of Object.entries(countryMapping)) {
+      const regex = new RegExp(`\\b${key}\\b`, 'gi'); // Nutze \b für exakte Übereinstimmung
+      input1 = input1.replace(regex, value);
+      input2 = input2.replace(regex, value);
+    }
+
+const list1 = input1.split(/[\s,;:*\/.\-"'()+]+/).map(code => code.trim().toUpperCase());
+const list2 = input2.split(/[\s,;:*\/.\-"'()+]+/).map(code => code.trim().toUpperCase());
+
 
       const missingCountries = [];
       const commonCountries = [];
