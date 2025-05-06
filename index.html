@@ -299,10 +299,15 @@
     }
 
     for (const [key, value] of Object.entries(countryMapping)) {
-      const regex = new RegExp(`\\b${key}\\b`, 'gi'); // Nutze \b für exakte Übereinstimmung
-      input1 = input1.replace(regex, value);
-      input2 = input2.replace(regex, value);
-    }
+  const regex = new RegExp(`\\b${key}\\b`, 'gi');
+  if (Array.isArray(value)) {
+    input1 = input1.replace(regex, value.join(', '));
+    input2 = input2.replace(regex, value.join(', '));
+  } else {
+    input1 = input1.replace(regex, value);
+    input2 = input2.replace(regex, value);
+  }
+}
 
 const list1 = input1.split(/[\s,;:*\/.\-"'()+]+/).map(code => code.trim().toUpperCase());
 const list2 = input2.split(/[\s,;:*\/.\-"'()+]+/).map(code => code.trim().toUpperCase());
@@ -316,43 +321,57 @@ const list2 = input2.split(/[\s,;:*\/.\-"'()+]+/).map(code => code.trim().toUppe
 
       // Check for common and missing countries
       for (const group in countryMapping) {
-        if (Array.isArray(countryMapping[group])) {
-          const groupCountries = countryMapping[group];
-          const commonInGroup = groupCountries.filter(code => list2.includes(code));
-          const missingInGroup = groupCountries.filter(code => !list2.includes(code));
+  if (Array.isArray(countryMapping[group])) {
+    if (list2.includes(group)) {
+      // Group explicitly present, treat as fully covered
+      commonCountries.push(group);
+      countryMapping[group].forEach(code => commonSet.add(code));
+      continue;
+    }
 
-          if (commonInGroup.length > 0) {
-            if (commonInGroup.length === groupCountries.length) {
-              commonCountries.push(group);
-              commonInGroup.forEach(code => commonSet.add(code));
-            } else {
-              commonCountries.push(`${group} (${commonInGroup.join(', ')})`);
-              commonInGroup.forEach(code => commonSet.add(code));
-            }
-          }
+    const groupCountries = countryMapping[group];
+    const commonInGroup = groupCountries.filter(code => list2.includes(code));
+    const missingInGroup = groupCountries.filter(code => !list2.includes(code));
 
-          if (missingInGroup.length > 0) {
-            if (missingInGroup.length === groupCountries.length) {
-              missingCountries.push(group);
-              missingInGroup.forEach(code => missingSet.add(code));
-            } else {
-              missingCountries.push(`${group} (${missingInGroup.join(', ')})`);
-              missingInGroup.forEach(code => missingSet.add(code));
-            }
-          }
-        }
+    if (commonInGroup.length > 0) {
+      if (commonInGroup.length === groupCountries.length) {
+        commonCountries.push(group);
+        commonInGroup.forEach(code => commonSet.add(code));
+      } else {
+        commonCountries.push(`${group} (${commonInGroup.join(', ')})`);
+        commonInGroup.forEach(code => commonSet.add(code));
       }
+    }
+
+    if (missingInGroup.length > 0) {
+      if (missingInGroup.length === groupCountries.length) {
+        missingCountries.push(group);
+        missingInGroup.forEach(code => missingSet.add(code));
+      } else {
+        missingCountries.push(`${group} (${missingInGroup.join(', ')})`);
+        missingInGroup.forEach(code => missingSet.add(code));
+      }
+    }
+  }
+}
 
       // Check for individual countries
-      list1.forEach(code => {
-        if (list2.includes(code) && !commonSet.has(code)) {
-          commonCountries.push(code);
-          commonSet.add(code);
-        } else if (!Object.keys(countryMapping).includes(code) && !missingSet.has(code)) {
-          missingCountries.push(code);
-          missingSet.add(code);
-        }
-      });
+      // Check for individual countries or unmapped codes
+list1.forEach(code => {
+  if (!commonSet.has(code) && list2.includes(code)) {
+    commonCountries.push(code);
+    commonSet.add(code);
+  } else if (
+    !commonSet.has(code) &&
+    !Object.values(countryMapping).flat().includes(code) &&  // not inside any group
+    !Object.keys(countryMapping).includes(code) &&
+    !missingSet.has(code)
+  ) {
+    missingCountries.push(code);
+    missingSet.add(code);
+  }
+});
+
 
       list2.forEach(code => {
         if (!list1.includes(code) && !Object.keys(countryMapping).includes(code)) {
