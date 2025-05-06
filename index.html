@@ -358,19 +358,19 @@ const list2 = input2.split(/[\s,;:*\/.\-"'()+]+/).map(code => code.trim().toUppe
       // Check for individual countries
       // Check for individual countries or unmapped codes
 list1.forEach(code => {
-  if (!commonSet.has(code) && list2.includes(code)) {
+  if (commonSet.has(code) || missingSet.has(code)) {
+    return; // already accounted for in group logic
+  }
+
+  if (list2.includes(code)) {
     commonCountries.push(code);
     commonSet.add(code);
-  } else if (
-    !commonSet.has(code) &&
-    !Object.values(countryMapping).flat().includes(code) &&  // not inside any group
-    !Object.keys(countryMapping).includes(code) &&
-    !missingSet.has(code)
-  ) {
+  } else {
     missingCountries.push(code);
     missingSet.add(code);
   }
 });
+
 
 
       list2.forEach(code => {
